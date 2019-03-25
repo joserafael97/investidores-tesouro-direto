@@ -1,0 +1,34 @@
+---
+title: "REPLACE ME"
+output:
+    html_document:
+    df_print: paged
+theme: sandstone
+---
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(here)
+library(ggplot2)
+source(here("code/lib.R"))
+theme_set(theme_bw())
+```
+
+## Lendo os dados
+
+```{r read}
+investidores_tesouro = read_projectdata() %>% 
+
+    glimpse()
+```
+```{r}
+skimr::skim(investidores_tesouro)
+```
+
+```{r}
+investidores_tesouro %>%
+    ggplot(aes(x=idade)) +
+    geom_histogram(bins = 40)
+```
+
+
