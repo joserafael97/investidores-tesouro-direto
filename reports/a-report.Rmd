@@ -18,7 +18,6 @@ theme_set(theme_bw())
 
 ```{r read}
 investidores_tesouro = read_projectdata() %>% 
-
     glimpse()
 ```
 ```{r}
@@ -29,6 +28,14 @@ skimr::skim(investidores_tesouro)
 investidores_tesouro %>%
     ggplot(aes(x=idade)) +
     geom_histogram(bins = 40)
+```
+
+```{r}
+investidores_tesouro %>%
+    group_by(profissao) %>%
+    summarise(quantidade = n(), idade = mean(idade)) %>%
+    ggplot(aes(x=quantidade, y=idade)) +
+    geom_jitter(aes(colour = profissao))
 ```
 
 
