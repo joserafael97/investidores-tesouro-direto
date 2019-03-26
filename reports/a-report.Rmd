@@ -9,6 +9,7 @@ theme: sandstone
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 library(tidyverse)
 library(here)
+library(lubridate)
 library(ggplot2)
 source(here("code/lib.R"))
 theme_set(theme_bw())
@@ -18,7 +19,7 @@ theme_set(theme_bw())
 
 ```{r read}
 investidores_tesouro = read_projectdata() %>% 
-    glimpse()
+    mutate(ano_adesao = floor_date(data_adesao, unit = "year"))
 ```
 ```{r}
 skimr::skim(investidores_tesouro)
@@ -27,15 +28,24 @@ skimr::skim(investidores_tesouro)
 ```{r}
 investidores_tesouro %>%
     ggplot(aes(x=idade)) +
-    geom_histogram(bins = 40)
+    geom_histogram(bins = 30)
+
+investidores_tesouro %>%
+    filter(genero != 'N') %>%
+    ggplot(aes(x=idade, color=genero)) +
+    geom_histogram(bins = 30, fill='white', alpha=0.1, position="dodge")
+```
+```{r}
+
 ```
 
 ```{r}
 investidores_tesouro %>%
-    group_by(profissao) %>%
-    summarise(quantidade = n(), idade = mean(idade)) %>%
-    ggplot(aes(x=quantidade, y=idade)) +
-    geom_jitter(aes(colour = profissao))
+    group_by(estado_civil) %>%
+    summarise(quantidade = n()) %>%
+    ggplot(aes(x=quantidade, y=estado_civil)) +
+    geom_jitter(aes(colour = estado_civil))+
+    scale_x_log10()
 ```
 
 

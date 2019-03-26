@@ -13,8 +13,11 @@ investidores_ativos_tesouro = investidores_tesouro %>%
               profissao = last(Profissao),
               idade = last(as.numeric(Idade)),
               estado_civil = last(`Estado Civil`),
-              data_adesao = last(`Data de Adesao`)
+              data_adesao = last(as.Date(`Data de Adesao`, format = "%d/%m/%Y"))
              )
+
+investidores_ativos_tesouro = investidores_ativos_tesouro() %>% 
+    mutate(ano_adesao = floor_date(data_adesao, unit = "year"))
 
 investidores_ativos_tesouro %>% 
     write_csv(here::here("dados/investidores_ativos_tesouro.csv"))
