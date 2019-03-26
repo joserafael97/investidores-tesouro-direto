@@ -11,19 +11,23 @@ library(tidyverse)
 library(here)
 library(lubridate)
 library(ggplot2)
-source(here("code/lib.R"))
+source(here::here("code/lib.R"))
 theme_set(theme_bw())
 ```
 
 ## Lendo os dados
 
 ```{r read}
-investidores_tesouro = read_projectdata() %>% 
-    mutate(ano_adesao = floor_date(data_adesao, unit = "year"))
+investidores_tesouro = read_projectdata() 
 ```
+
 ```{r}
 skimr::skim(investidores_tesouro)
 ```
+
+Vamos vê a distribuições dos investidores por Idade
+
+é Possível existir investidores com idade inferior a 1 ano e maior que 110 anos?
 
 ```{r}
 investidores_tesouro %>%
@@ -34,18 +38,55 @@ investidores_tesouro %>%
     filter(genero != 'N') %>%
     ggplot(aes(x=idade, color=genero)) +
     geom_histogram(bins = 30, fill='white', alpha=0.1, position="dodge")
-```
-```{r}
 
+investidores_tesouro %>% 
+    filter(idade > 110) %>% 
+    glimpse()
+
+investidores_tesouro %>% 
+    filter(idade < 1)
 ```
+
+
 
 ```{r}
 investidores_tesouro %>%
-    group_by(estado_civil) %>%
-    summarise(quantidade = n()) %>%
-    ggplot(aes(x=quantidade, y=estado_civil)) +
-    geom_jitter(aes(colour = estado_civil))+
-    scale_x_log10()
+    ggplot(aes(x=idade, y=estado_civil)) +
+    geom_jitter(aes(colour = estado_civil))
+```
+
+O número de investidores cresceu ao longo dos anos?
+
+```{r}
+investidores_tesouro %>% 
+    group_by(ano_adesao)  %>% 
+    summarise(numero_investidores = n()) %>% 
+    ggplot(aes(x = ano_adesao, y = numero_investidores)) +
+    geom_line() + geom_point() +
+    xlab("ano") +  ylab ("número de investidores")
+```
+
+É possível notar alguma mudança ao longo dos anos em relação idade dos investidores?
+
+```{r}
+investidores_tesouro %>% 
+    filter(genero != 'N') %>%
+    ggplot(aes(x = as.factor(ano_adesao), y = idade)) +
+    geom_point(aes(colour = genero), position = "jitter", alpha=0.5) +
+    geom_smooth(color = "black",size = 0.8) +
+    xlab("ano") +  ylab ("Idade")
+
+investidores_tesouro %>% 
+    filter(genero != 'N') %>%
+    ggplot(aes(x = as.factor(ano_adesao), y = idade)) +
+    geom_boxplot(fill = "orange") +
+    xlab("ano") +  ylab ("Idade")
+
+investidores_tesouro %>% 
+    ggplot(aes(x = as.factor(ano_adesao), y = idade)) +
+    geom_violin(fill = "darkgreen") +
+    xlab("ano") +  ylab ("Idade")
+
 ```
 
 
